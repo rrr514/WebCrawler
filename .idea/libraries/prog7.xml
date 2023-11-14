@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="prog7">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/attoparser-2.0.0.BETA2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/rhf.zip!/" />
+      <root url="jar://$PROJECT_DIR$/superspoof.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

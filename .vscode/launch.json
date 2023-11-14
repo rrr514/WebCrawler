@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "WebServer",
+            "request": "launch",
+            "mainClass": "assignment.WebServer",
+            "projectName": "prog7"
+        },
+        {
+            "type": "java",
+            "name": "WebCrawler",
+            "request": "launch",
+            "mainClass": "assignment.WebCrawler",
+            "projectName": "prog7"
+        },
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        }
+    ]
+}
