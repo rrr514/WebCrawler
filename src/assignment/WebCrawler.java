@@ -42,6 +42,8 @@ public class WebCrawler {
         // Try to start crawling, adding new URLS as we see them.
         try {
             while (!remaining.isEmpty()) {
+                //update the page
+                handler.url = remaining.peek();
                 // Parse the next URL's page
                 parser.parse(new InputStreamReader(remaining.poll().openStream()), handler);
 
@@ -49,6 +51,8 @@ public class WebCrawler {
                 remaining.addAll(handler.newURLs());
             }
 
+            //debug code - printing out the index
+            System.out.println(handler.getIndex());
             handler.getIndex().save("index.db");
         } catch (Exception e) {
             // Bad exception handling :(

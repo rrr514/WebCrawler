@@ -1,6 +1,7 @@
 package assignment;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.net.*;
 import org.attoparser.simple.*;
 
@@ -12,14 +13,18 @@ import org.attoparser.simple.*;
  */
 public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
 
+    //stores the page that is currently being crawled through
+    URL url;
+    private WebIndex ind = new WebIndex();
+    private HashSet<URL> urls = new HashSet<>();
+
     public CrawlingMarkupHandler() {}
 
     /**
     * This method returns the complete index that has been crawled thus far when called.
     */
     public Index getIndex() {
-        // TODO: Implement this!
-        return new WebIndex();
+        return ind;
     }
 
     /**
@@ -124,5 +129,41 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
         }
 
         System.out.print("\"\n");
+
+        //iterate through ch array and add all words to the index
+        // System.out.println(ch);
+        StringBuilder sb = new StringBuilder();
+        for(int i = start;i < start + length; i++){
+            //punctuation mark case
+            if(Pattern.matches("\\p{Punct}", "" + ch[i])){
+                //if last char is punctuation, then add the word to the index
+                if(i == ch.length - 1){
+                    ind.insert(sb.toString(), url);
+                    //clear the StringBuilder
+                    sb.setLength(0);
+                }
+                //else check to see if the following char is a whitespace
+                else{
+                    //if it is, we have a word, so add it to the index
+                    if(Character.isWhitespace(ch[i+1])){
+                        ind.insert(sb.toString(), url);
+                        //clear the StringBuilder
+                        sb.setLength(0);
+                    }
+                    //else the word is not finished, and append the next character
+                    else{
+                        sb.append(ch[i]);
+                    }
+                }
+            }
+            //whitespace case
+            else if(Character.isWhitespace(ch[i])){
+                ind.insert(sb.toString(), url);
+                sb.setLength(0);
+            }
+            else{
+                sb.append(ch[i]);
+            }
+        }
     }
 }
