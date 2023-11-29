@@ -40,19 +40,34 @@ public class WebCrawler {
         CrawlingMarkupHandler handler = new CrawlingMarkupHandler();
 
         // Try to start crawling, adding new URLS as we see them.
+        //debug code
+        int urlCount = 0;
         try {
             while (!remaining.isEmpty()) {
+                //skip non html pages
+                if(!remaining.peek().toString().endsWith("html")){
+                    remaining.poll();
+                    continue;
+                }
+                //debug code - printing out current url
+                System.out.println(remaining.peek());
                 //update the page
                 handler.url = remaining.peek();
+                //add to visited URLs
+                handler.visitedURLs.add(remaining.peek());
                 // Parse the next URL's page
                 parser.parse(new InputStreamReader(remaining.poll().openStream()), handler);
 
                 // Add any new URLs
                 remaining.addAll(handler.newURLs());
+                //debug code
+                urlCount++;
             }
 
             //debug code - printing out the index
             System.out.println(handler.getIndex());
+            //debug code - printing out how many urls were crawled
+            System.out.println(urlCount);
             handler.getIndex().save("index.db");
         } catch (Exception e) {
             // Bad exception handling :(
