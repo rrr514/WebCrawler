@@ -2,6 +2,7 @@ package assignment;
 
 import java.util.*;
 import java.util.regex.Pattern;
+import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import org.attoparser.simple.*;
@@ -107,6 +108,10 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
         if (attributes != null && attributes.containsKey("HREF")) {
             // check if already visited the url
             String link = attributes.get("HREF");
+            File file = new File(link);
+            if (!file.exists()){
+                return;
+            }
             try {
                 URL urlAdd = new URL(url, link);
                 // if the URL hasn't been visited, add it to the new URLs list
