@@ -1,5 +1,6 @@
 package assignment;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -20,10 +21,12 @@ public class WebIndex extends Index {
 
     //indexes
     HashMap<String, HashSet<URL>> ind;
+    HashMap<URL, ArrayList<String>> pageContents;
 
     //initialize instance vars
     public WebIndex(){
         ind = new HashMap<>();
+        pageContents = new HashMap<>();
     }
 
     /**
@@ -64,5 +67,9 @@ public class WebIndex extends Index {
             ret.append(s + "->" + ind.get(s) + "\n");
         }
         return ret.toString();
+    }
+
+    public int getIndSize(){
+        return ind.size();
     }
 }

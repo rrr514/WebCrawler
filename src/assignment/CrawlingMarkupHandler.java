@@ -21,6 +21,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     private WebIndex ind = new WebIndex();
     HashSet<URL> visitedURLs = new HashSet<>();
     private HashSet<URL> newURLs = new HashSet<>();
+    ArrayList<String> words = new ArrayList<>();
     int ignoreCount = 0;
 
     public CrawlingMarkupHandler() {
@@ -67,6 +68,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
      */
     public void handleDocumentStart(long startTimeNanos, int line, int col) {
         // TODO: Implement this.
+        words = new ArrayList<>();
         System.out.println("Start of document");
     }
 
@@ -81,6 +83,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
      */
     public void handleDocumentEnd(long endTimeNanos, long totalTimeNanos, int line, int col) {
         // TODO: Implement this.
+        ind.pageContents.put(url, words);
         System.out.println("End of document");
     }
 
@@ -108,12 +111,21 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
         if (attributes != null && attributes.containsKey("HREF")) {
             // check if already visited the url
             String link = attributes.get("HREF");
-            File file = new File(link);
-            if (!file.exists()){
-                return;
-            }
+            
             try {
                 URL urlAdd = new URL(url, link);
+                // System.out.println("URL: " + urlAdd.toString());
+                // File file = new File(urlAdd.toString());
+                // System.out.println("File tested: " + file.toString());
+                // if (!file.exists()){
+                //     System.out.println("File does not exist.");
+                //     return;
+                // }
+                File f = new File(urlAdd.getFile());
+                if(!f.exists()){
+                    return;
+                }
+
                 // if the URL hasn't been visited, add it to the new URLs list
                 if (!visitedURLs.contains(urlAdd)) {
                     // check if its an html webpage
@@ -192,14 +204,20 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
         // iterate through ch array and add all words to the index
         // System.out.println(ch);
         StringBuilder sb = new StringBuilder();
+        
         for (int i = start; i < start + length; i++) {
             if (ignoreCount != 0)
                 continue;
             // punctuation mark case
             if (Pattern.matches("\\p{Punct}", "" + ch[i])) {
+                // if first char is punctuation, then skip
+                if (sb.length() == 0) continue;
                 // if last char is punctuation, then add the word to the index
                 if (i == ch.length - 1) {
+                    if(sb.length() == 0) continue;
+                    sb = trimPunctuation(sb);
                     ind.insert(sb.toString(), url);
+                    words.add(sb.toString());
                     // clear the StringBuilder
                     sb.setLength(0);
                 }
@@ -207,7 +225,10 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                 else {
                     // if it is, we have a word, so add it to the index
                     if (Character.isWhitespace(ch[i + 1])) {
+                        if(sb.length() == 0) continue;
+                        sb = trimPunctuation(sb);
                         ind.insert(sb.toString(), url);
+                        words.add(sb.toString());
                         // clear the StringBuilder
                         sb.setLength(0);
                     }
@@ -219,11 +240,25 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             }
             // whitespace case
             else if (Character.isWhitespace(ch[i])) {
+                if(sb.length() == 0) continue;
+                sb = trimPunctuation(sb);
                 ind.insert(sb.toString(), url);
+                words.add(sb.toString());
                 sb.setLength(0);
             } else {
                 sb.append(ch[i]);
             }
         }
+    }
+
+    private StringBuilder trimPunctuation(StringBuilder sb){
+        int left = 0, right = sb.length()-1;
+        while(Pattern.matches("\\p{Punct}", "" + sb.charAt(left))){
+            left++;
+        }
+        while(Pattern.matches("\\p{Punct}", "" + sb.charAt(right))){
+            right--;
+        }
+        return new StringBuilder(sb.substring(left, right+1));
     }
 }

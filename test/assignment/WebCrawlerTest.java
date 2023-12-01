@@ -4,9 +4,11 @@ import org.junit.Test;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.io.File;
 import java.net.*;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /*
  * Any comments and methods here are purely descriptions or suggestions.
@@ -31,16 +33,15 @@ public class WebCrawlerTest {
 
     @Test
     public void testWebCrawler() {
-        try{
-            String s1, s2;
-            s1 = "file:///Users/rrr/git-314h/314h-prog7-prog7group16/superspoof/www.superspoof.com/blair/index.html";
-            URL old = new URL(s1);
-            s2 = "../../external.html";
-            URL url = new URL(old, s2);
-            System.out.println(url.toString());
-        }
-        catch(MalformedURLException e){
-            System.err.println("Error: MalformedURLException");
+        File f = new File("/Users/rrr/git-314h/314h-prog7-prog7group16/superspoof/www.superspoof.com/index.html");
+        try {
+            URL url = new URL("/Users/rrr/git-314h/314h-prog7-prog7group16/superspoof/www.superspoof.com/index.html");
+            File g = new File(url.toString());
+            assertTrue(f.exists());
+            assertTrue(g.exists());
+        } catch (MalformedURLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
     }

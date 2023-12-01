@@ -9,6 +9,9 @@ import java.util.*;
  * TODO: Implement this!
  */
 public class WebQueryEngine {
+
+    WebIndex webInd;
+
     /**
      * Returns a WebQueryEngine that uses the given Index to constructe answers to queries.
      *
@@ -16,8 +19,9 @@ public class WebQueryEngine {
      * @return A WebQueryEngine ready to be queried.
      */
     public static WebQueryEngine fromIndex(WebIndex index) {
-        // TODO: Implement this!
-        return new WebQueryEngine();
+        WebQueryEngine ret = new WebQueryEngine();
+        ret.webInd = index;
+        return ret;
     }
 
     /**
@@ -27,7 +31,13 @@ public class WebQueryEngine {
      * @return A collection of web pages satisfying the query.
      */
     public Collection<Page> query(String query) {
-        // TODO: Implement this!
-        return new LinkedList<>();
+        query = query.toUpperCase();
+        LinkedList<Page> ret = new LinkedList<>();
+        Page p;
+        for(URL u: webInd.ind.get(query)){
+            p = new Page(u);
+            ret.add(p);
+        }
+        return ret;
     }
 }

@@ -64,10 +64,16 @@ public class WebCrawler {
                 urlCount++;
             }
 
+            WebIndex index = (WebIndex) handler.getIndex();
             //debug code - printing out the index
-            System.out.println(handler.getIndex());
+            System.out.println(index);
             //debug code - printing out how many urls were crawled
-            System.out.println(urlCount);
+            System.out.println("Pages Traversed: " + urlCount);
+            //debug code - printing out how many words are in the index
+            System.out.println("Number of words in index: " + index.ind.size());
+            // //debug code - printing out the page contents
+            // System.out.println(index.pageContents);
+            System.out.println("Page Contents Size: " + index.pageContents.size());
             handler.getIndex().save("index.db");
         } catch (Exception e) {
             // Bad exception handling :(
