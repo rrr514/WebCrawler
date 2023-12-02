@@ -32,10 +32,9 @@ public class WebCrawlerTest {
     public void setupEach() {
     }
 
-
     @Test
     public void testWebCrawler() {
-        String query = "(\" START          END\" words ) (words \"oihwefihoiweh\" more) (word word2) ";
+        String query = "(\" START          END\" words ) (w ((z)(words) | words(z)) \"oihwef ihoiweh\" (more & more)) (word word2) w";
         query = query.trim();
         String tokens[] = query.split("\\s+");
         StringBuilder sb = new StringBuilder();
@@ -64,15 +63,27 @@ public class WebCrawlerTest {
             }
             //if not in quotations
             if(!temp){
-                //add implicit & between phrase query and regular word
-                if (sb.toString().charAt(i-1) == '"' && !isOperator(sb.toString().charAt(i))) {
+                //add implicit & between phrase query and regular word, including the case where the regular word
+                //begins in a parenthesis
+                if ((sb.toString().charAt(i-1) == '"') && 
+                (!isOperator(sb.toString().charAt(i)) || sb.toString().charAt(i) == '(')) {
                     sbTemp.append('&'); 
                     // System.out.println("Case 1");
                 }
-                //add implicit & between regular word and phrase query
-                if (!isOperator(sb.toString().charAt(i-1)) && sb.toString().charAt(i) == '"') {
+                //add implicit & between regular word and phrase query, including the case where the phrase query
+                //ends in a parenthesis
+                if ((!isOperator(sb.toString().charAt(i-1)) || sb.toString().charAt(i-1) == ')') 
+                && sb.toString().charAt(i) == '"') {
                     sbTemp.append('&'); 
                     // System.out.println("Case 2");
+                }
+                //add implicit & between regular word and open parentheses
+                if(!isOperator(sb.toString().charAt(i-1)) && sb.toString().charAt(i) == '('){
+                    sbTemp.append('&');
+                }
+                //add implicit & between closing parentheses and regular word
+                if(sb.toString().charAt(i-1) == ')' && !isOperator(sb.toString().charAt(i))){
+                    sbTemp.append('&');
                 }
                 //add implicit & between two phrase queries
                 if (sb.toString().charAt(i-1) == '"' && sb.toString().charAt(i) == '"') {
@@ -107,13 +118,13 @@ public class WebCrawlerTest {
             //if inside quotations, continue to next letter
             if (flag && sb.charAt(i) == ' ') sb2.append(" ");
             //if outside quotations, add an implicit 'and'
-            if (!flag && sb.charAt(i) == ' '){
-                if (sb2.length() != 0){
-                    infix.add(sb2.toString());
-                    sb2.setLength(0);
-                }
-                infix.add("&");
-            }
+            // if (!flag && sb.charAt(i) == ' '){
+            //     if (sb2.length() != 0){
+            //         infix.add(sb2.toString());
+            //         sb2.setLength(0);
+            //     }
+            //     infix.add("&");
+            // }
             //if it is a letter, append to word builder
             if (!isOperator(sb.charAt(i)) && sb.charAt(i) != ' ') sb2.append(""+sb.charAt(i));
         }
