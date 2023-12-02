@@ -8,6 +8,9 @@ import java.io.File;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -36,7 +39,8 @@ public class WebCrawlerTest {
     public void testWebCrawler() {
         // String query = "(\" START          END\" words ) (a ( ( b ) ( c ) | d ( e ) ) \"f g\" ( 0 & 1 ) ) ( 2 3 ) 4";
         // String query = "! ( ( 4 ) ! 3) ( ! 7 \" 57439 84329\" ! 6) ( 1 ! 9 ) )";
-        String query = "(hello | world) (hi | globe)";
+        //String query = " .a ( h | w ) .b ( h. | ( g.. ! .f ) ) ( \" ...e        b... \" ) . \"    h       b\" . ";
+        String query = "(hello | world & (! not & your mom)) (hi | globe)";
         query = query.trim();
         String tokens[] = query.split("\\s+");
         StringBuilder sb = new StringBuilder();
@@ -146,10 +150,48 @@ public class WebCrawlerTest {
         if (sb2.length() != 0){
             infix.add(sb2.toString());
         }
+
+        //shunting yard algorithm to convert infix to RPN
+        Stack<String> ops = new Stack<>();
+        Queue<String> output = new LinkedList<String>();
+        //char[] q = sb.toString().toCharArray();
+
+        for (int i = 0; i < infix.size(); i++) {
+            // TODO if word add to queue
+            switch (infix.get(i)) {
+                case "!":
+                case "&":
+                case "|": 
+                    while(!ops.empty() && ops.peek().equals("!")){
+                        output.add(ops.pop());
+                    }
+                    ops.push(infix.get(i));
+                    break;
+                case "(":
+                    ops.push(infix.get(i));
+                    break;
+                case ")":
+                    while (!ops.empty() && !ops.peek().equals("(")) {
+                        output.add("" + ops.pop());
+                    }
+                    if(!ops.empty()) ops.pop();
+                    break;
+                default:
+                    output.add(infix.get(i));
+            }
+        }
+        while(!ops.empty()){
+            if (ops.peek().equals("(")){
+                ops.pop();
+                continue;
+            }
+            output.add(ops.pop());
+        }
         //debugging
         System.out.println(sb);
         System.out.println(sb2);
         System.out.println("Infix Expression: " + (infix));
+        System.out.println("RPN: " + output.toString());
 
     }
 
