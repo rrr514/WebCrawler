@@ -28,7 +28,8 @@ public class WebCrawler {
         Queue<URL> remaining = new LinkedList<>();
         for (String url : args) {
             try {
-                remaining.add(new URL(url));
+                URI uri = URI.create(url);
+                remaining.add(uri.toURL());
             } catch (MalformedURLException e) {
                 // Throw this one out!
                 System.err.printf("Error: URL '%s' was malformed and will be ignored!%n", url);

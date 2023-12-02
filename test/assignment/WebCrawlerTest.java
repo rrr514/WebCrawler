@@ -34,8 +34,9 @@ public class WebCrawlerTest {
 
     @Test
     public void testWebCrawler() {
-        String query = "(\" START          END\" words ) (a ( ( b ) ( c ) | d ( e ) ) \"f g\" ( 0 & 1 ) ) ( 2 3 ) 4";
-        //String query = "! ( ( 4 ) ! 3) ( ! 7 \" 57439 84329\" ! 6) ( 1 ! 9 ) )";
+        // String query = "(\" START          END\" words ) (a ( ( b ) ( c ) | d ( e ) ) \"f g\" ( 0 & 1 ) ) ( 2 3 ) 4";
+        // String query = "! ( ( 4 ) ! 3) ( ! 7 \" 57439 84329\" ! 6) ( 1 ! 9 ) )";
+        String query = "(hello | world) (hi | globe)";
         query = query.trim();
         String tokens[] = query.split("\\s+");
         StringBuilder sb = new StringBuilder();

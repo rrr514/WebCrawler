@@ -113,8 +113,11 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             String link = attributes.get("HREF");
             
             try {
-                URL urlAdd = new URL(url, link);
-                // System.out.println("URL: " + urlAdd.toString());
+                // URI uri = URI.create(link);
+                URI urli = URI.create(url.toString());
+                // System.out.println("URI: " + uri.toString());
+                URL urlAdd = urli.resolve(link).normalize().toURL();
+                System.out.println("URL: " + urlAdd.toString());
                 // File file = new File(urlAdd.toString());
                 // System.out.println("File tested: " + file.toString());
                 // if (!file.exists()){
