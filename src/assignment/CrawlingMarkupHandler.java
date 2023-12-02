@@ -113,7 +113,6 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             String link = attributes.get("HREF");
             
             try {
-                // URI uri = URI.create(link);
                 URI urli = URI.create(url.toString());
                 // System.out.println("URI: " + uri.toString());
                 URL urlAdd = urli.resolve(link).normalize().toURL();
