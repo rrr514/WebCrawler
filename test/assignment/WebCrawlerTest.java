@@ -34,7 +34,8 @@ public class WebCrawlerTest {
 
     @Test
     public void testWebCrawler() {
-        String query = "(\" START          END\" words ) (w ((z)(words) | words(z)) \"oihwef ihoiweh\" (more & more)) (word word2) w";
+        String query = "(\" START          END\" words ) (a ( ( b ) ( c ) | d ( e ) ) \"f g\" ( 0 & 1 ) ) ( 2 3 ) 4";
+        //String query = "! ( ( 4 ) ! 3) ( ! 7 \" 57439 84329\" ! 6) ( 1 ! 9 ) )";
         query = query.trim();
         String tokens[] = query.split("\\s+");
         StringBuilder sb = new StringBuilder();
@@ -83,6 +84,18 @@ public class WebCrawlerTest {
                 }
                 //add implicit & between closing parentheses and regular word
                 if(sb.toString().charAt(i-1) == ')' && !isOperator(sb.toString().charAt(i))){
+                    sbTemp.append('&');
+                }
+                //add implicit & between closing parentheses and not operator
+                if(sb.toString().charAt(i-1) == ')' && sb.toString().charAt(i) == '!'){
+                    sbTemp.append('&');
+                }
+                //add implicit & between phrase query and not operator
+                if(sb.toString().charAt(i-1) == '"' && sb.toString().charAt(i) == '!'){
+                    sbTemp.append('&');
+                }
+                //add implicit & between regular word and not operator
+                if(!isOperator(sb.toString().charAt(i-1)) && sb.toString().charAt(i) == '!'){
                     sbTemp.append('&');
                 }
                 //add implicit & between two phrase queries
