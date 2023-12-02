@@ -55,31 +55,38 @@ public class WebCrawlerTest {
         //adding implicit ands
         sbTemp.append(sb.toString().charAt(0)); //assuming not empty
         boolean temp = false;
+        boolean implicitAndBetweenTwoWords = false;
         for (int i = 1; i < sb.toString().length(); i++) {
             //add implicit & between opposing parentheses
             if (sb.toString().charAt(i-1) == ')' && sb.toString().charAt(i) == '(') {
                 sbTemp.append('&'); 
-                System.out.println("Case 4");
+                // System.out.println("Case 4");
             }
             //if not in quotations
             if(!temp){
                 //add implicit & between phrase query and regular word
                 if (sb.toString().charAt(i-1) == '"' && !isOperator(sb.toString().charAt(i))) {
                     sbTemp.append('&'); 
-                    System.out.println("Case 1");
+                    // System.out.println("Case 1");
                 }
                 //add implicit & between regular word and phrase query
                 if (!isOperator(sb.toString().charAt(i-1)) && sb.toString().charAt(i) == '"') {
                     sbTemp.append('&'); 
-                    System.out.println("Case 2");
+                    // System.out.println("Case 2");
                 }
                 //add implicit & between two phrase queries
                 if (sb.toString().charAt(i-1) == '"' && sb.toString().charAt(i) == '"') {
                     sbTemp.append('&'); 
-                    System.out.println("Case 3");
+                    // System.out.println("Case 3");
                 }
-            }  
-            sbTemp.append(""+sb.charAt(i));
+                //add implicit & between two regular words
+                if(sb.toString().charAt(i) == ' '){
+                    sbTemp.append('&');
+                    implicitAndBetweenTwoWords = true;
+                }
+            }
+            if(!implicitAndBetweenTwoWords) sbTemp.append(""+sb.charAt(i));
+            implicitAndBetweenTwoWords = false;
             if(sb.toString().charAt(i) == '"') temp = !temp;
         }
         sb = sbTemp;
