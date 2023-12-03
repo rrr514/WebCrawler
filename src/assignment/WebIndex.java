@@ -22,11 +22,13 @@ public class WebIndex extends Index {
     //indexes
     HashMap<String, HashSet<URL>> ind;
     HashMap<URL, ArrayList<String>> pageContents;
+    HashSet<URL> visitedURLs;
 
     //initialize instance vars
     public WebIndex(){
         ind = new HashMap<>();
         pageContents = new HashMap<>();
+        visitedURLs = new HashSet<>();
     }
 
     /**
@@ -49,6 +51,7 @@ public class WebIndex extends Index {
             }
             else {
                 wordPages.add(url);
+                visitedURLs.add(url);
                 return true;
             }
         }

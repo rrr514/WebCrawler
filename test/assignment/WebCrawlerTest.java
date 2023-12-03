@@ -39,8 +39,12 @@ public class WebCrawlerTest {
     public void testWebCrawler() {
         // String query = "(\" START          END\" words ) (a ( ( b ) ( c ) | d ( e ) ) \"f g\" ( 0 & 1 ) ) ( 2 3 ) 4";
         // String query = "! ( ( 4 ) ! 3) ( ! 7 \" 57439 84329\" ! 6) ( 1 ! 9 ) )";
-        //String query = " .a ( h | w ) .b ( h. | ( g.. ! .f ) ) ( \" ...e        b... \" ) . \"    h       b\" . ";
-        String query = "(hello | world & (! not & your mom)) (hi | globe)";
+        // String query = " .a ( h | w ) .b ( h. | ( g.. ! .f ) ) ( \" ...e        b... \" ) . \"    h       b\" . ";
+        // String query = "(hello | world & (! not & your mom)) (hi | globe)";
+        // String query = " ( \" phrase phrase2 \" ) ! \" your \" ";
+        // String query = " ! \" not \" ( ! your ! mom ) ( hi & ! \" phrase phrase \" ) ! no ";
+        // String query = "(hello | world)(hi | globe)";
+        String query = "!and";
         query = query.trim();
         String tokens[] = query.split("\\s+");
         StringBuilder sb = new StringBuilder();
@@ -157,7 +161,6 @@ public class WebCrawlerTest {
         //char[] q = sb.toString().toCharArray();
 
         for (int i = 0; i < infix.size(); i++) {
-            // TODO if word add to queue
             switch (infix.get(i)) {
                 case "!":
                 case "&":
@@ -187,6 +190,9 @@ public class WebCrawlerTest {
             }
             output.add(ops.pop());
         }
+
+
+        
         //debugging
         System.out.println(sb);
         System.out.println(sb2);
@@ -209,7 +215,7 @@ public class WebCrawlerTest {
 
     @Test
     public void testWebQuery() {
-
+        
     }
 
 }

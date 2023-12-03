@@ -18,8 +18,8 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
 
     // stores the page that is currently being crawled through
     URL url;
-    private WebIndex ind = new WebIndex();
-    HashSet<URL> visitedURLs = new HashSet<>();
+    WebIndex ind = new WebIndex();
+    // HashSet<URL> visitedURLs = ind.visitedURLs;
     private HashSet<URL> newURLs = new HashSet<>();
     ArrayList<String> words = new ArrayList<>();
     int ignoreCount = 0;
@@ -69,7 +69,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     public void handleDocumentStart(long startTimeNanos, int line, int col) {
         // TODO: Implement this.
         words = new ArrayList<>();
-        System.out.println("Start of document");
+        // System.out.println("Start of document");
     }
 
     /**
@@ -84,7 +84,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     public void handleDocumentEnd(long endTimeNanos, long totalTimeNanos, int line, int col) {
         // TODO: Implement this.
         ind.pageContents.put(url, words);
-        System.out.println("End of document");
+        // System.out.println("End of document");
     }
 
     /**
@@ -116,7 +116,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                 URI urli = URI.create(url.toString());
                 // System.out.println("URI: " + uri.toString());
                 URL urlAdd = urli.resolve(link).normalize().toURL();
-                System.out.println("URL: " + urlAdd.toString());
+                // System.out.println("URL: " + urlAdd.toString());
                 // File file = new File(urlAdd.toString());
                 // System.out.println("File tested: " + file.toString());
                 // if (!file.exists()){
@@ -129,12 +129,12 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                 }
 
                 // if the URL hasn't been visited, add it to the new URLs list
-                if (!visitedURLs.contains(urlAdd)) {
+                if (!ind.visitedURLs.contains(urlAdd)) {
                     // check if its an html webpage
                     if (urlAdd.toString().endsWith("html")) {
-                        visitedURLs.add(urlAdd);
+                        ind.visitedURLs.add(urlAdd);
                         newURLs.add(urlAdd);
-                        System.out.printf("Successfully added URL '%s' from page.\n", urlAdd);
+                        // System.out.printf("Successfully added URL '%s' from page.\n", urlAdd);
                     }
                 }
             } catch (MalformedURLException e) {

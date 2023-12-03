@@ -51,11 +51,11 @@ public class WebCrawler {
                     continue;
                 }
                 //debug code - printing out current url
-                System.out.println(remaining.peek());
+                // System.out.println(remaining.peek());
                 //update the page
                 handler.url = remaining.peek();
                 //add to visited URLs
-                handler.visitedURLs.add(remaining.peek());
+                handler.ind.visitedURLs.add(remaining.peek());
                 // Parse the next URL's page
                 parser.parse(new InputStreamReader(remaining.poll().openStream()), handler);
 
@@ -75,6 +75,9 @@ public class WebCrawler {
             // //debug code - printing out the page contents
             // System.out.println(index.pageContents);
             System.out.println("Page Contents Size: " + index.pageContents.size());
+            // System.out.println("Visited URLs: " + handler.visitedURLs);
+            //debug code - printing out the number of visited urls
+            System.out.println("Number of visited URLs: " + handler.ind.visitedURLs.size());
             handler.getIndex().save("index.db");
         } catch (Exception e) {
             // Bad exception handling :(

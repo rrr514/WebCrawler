@@ -161,30 +161,95 @@ public class WebQueryEngine {
         //char[] q = sb.toString().toCharArray();
 
         for (int i = 0; i < infix.size(); i++) {
-            // TODO if word add to queue
             switch (infix.get(i)) {
                 case "!":
                 case "&":
                 case "|": 
+                    while(!ops.empty() && ops.peek().equals("!")){
+                        output.add(ops.pop());
+                    }
                     ops.push(infix.get(i));
+                    break;
                 case "(":
                     ops.push(infix.get(i));
                     break;
                 case ")":
-                    while (ops.peek() != "(") {
+                    while (!ops.empty() && !ops.peek().equals("(")) {
                         output.add("" + ops.pop());
                     }
-                    ops.pop();
+                    if(!ops.empty()) ops.pop();
                     break;
                 default:
                     output.add(infix.get(i));
             }
         }
         while(!ops.empty()){
+            if (ops.peek().equals("(")){
+                ops.pop();
+                continue;
+            }
             output.add(ops.pop());
         }
 
-        return null;
+        //evaluate the RPN
+        Stack<HashSet<URL>> eval = new Stack<>();
+        HashSet<URL> pushing;
+        HashSet<URL> popped1;
+        HashSet<URL> popped2;
+        while(!output.isEmpty()){
+            String rem = output.poll();
+            //if phrase or word
+            if(!isOperator(rem.charAt(0))){
+                //push the set of URLs onto the eval stack
+                rem = rem.toUpperCase();
+                pushing = webInd.ind.get(rem);
+                if(pushing == null) pushing = new HashSet<>();
+                eval.push(pushing);
+            }
+            //if operator
+            else{
+                //not operator
+                if(rem.equals("!")){
+                    popped1 = eval.pop();
+                    if(popped1 == null){
+                        System.err.println("Failing silently: popped1 is null");
+                    }
+                    //pushing = getSetComplement(popped1);
+                    // pushing.addAll(webInd.visitedURLs);
+                    //getting set complement
+                    pushing = new HashSet<>(webInd.visitedURLs);
+                    pushing.removeAll(popped1);
+                    eval.push(pushing);
+                }
+                else {
+                    //everything else
+                    popped1 = eval.pop();
+                    popped2 = eval.pop();
+                    //and operator
+                    if(rem.equals("&")){
+                        // pushing = getSetIntersection(popped1, popped2);
+                        //getting set intersection
+                        pushing = new HashSet<>(popped1);
+                        pushing.retainAll(popped2);
+                        eval.push(pushing);
+                    }
+                    //or operator
+                    else if(rem.equals("|")){
+                        // pushing = getSetUnion(popped1, popped2);
+                        //getting set union
+                        pushing = new HashSet<>(popped1);
+                        pushing.addAll(popped2);
+                        eval.push(pushing);
+                    }
+                }
+            }
+        }
+
+        if(eval.size() != 1) System.err.println("Failing silently: More than 1 result left in eval stack");
+        for(URL u: eval.peek()){
+            ret.add(new Page(u));
+        }
+        return ret;
 
         /*
         pseudo solution for parsing queries
