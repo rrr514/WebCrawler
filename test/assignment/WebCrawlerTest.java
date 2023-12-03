@@ -37,14 +37,14 @@ public class WebCrawlerTest {
 
     @Test
     public void testWebCrawler() {
-        // String query = "(\" START          END\" words ) (a ( ( b ) ( c ) | d ( e ) ) \"f g\" ( 0 & 1 ) ) ( 2 3 ) 4";
+        String query = " ( ! \" START          END\" words ) 6 ( a & ( b ( c | d ) ) \"     f g      \" ( 0 & 1 ) ) ! 2 4 ";
         // String query = "! ( ( 4 ) ! 3) ( ! 7 \" 57439 84329\" ! 6) ( 1 ! 9 ) )";
         // String query = " .a ( h | w ) .b ( h. | ( g.. ! .f ) ) ( \" ...e        b... \" ) . \"    h       b\" . ";
         // String query = "(hello | world & (! not & your mom)) (hi | globe)";
         // String query = " ( \" phrase phrase2 \" ) ! \" your \" ";
         // String query = " ! \" not \" ( ! your ! mom ) ( hi & ! \" phrase phrase \" ) ! no ";
         // String query = "(hello | world)(hi | globe)";
-        String query = "!and";
+        //String query = "\"I am\"";
         query = query.trim();
         String tokens[] = query.split("\\s+");
         StringBuilder sb = new StringBuilder();
@@ -64,6 +64,7 @@ public class WebCrawlerTest {
         //adding implicit ands
         sbTemp.append(sb.toString().charAt(0)); //assuming not empty
         boolean temp = false;
+        if(sb.charAt(0) == '"') temp = true;
         boolean implicitAndBetweenTwoWords = false;
         for (int i = 1; i < sb.toString().length(); i++) {
             //add implicit & between opposing parentheses
@@ -213,9 +214,30 @@ public class WebCrawlerTest {
         }
     }
 
+    private boolean containsPhrase(URL url, String[] phrase){
+        ArrayList<String> page = new ArrayList<>();
+        // page.add("word");
+        // page.add("bee");
+        // page.add("hi");
+        // page.add("apple");
+        // page.add("bear");
+        // page.add("wordhi");
+        outer:
+        for (int i = 0; i < page.size()-phrase.length+1; i++) {
+            for (int j = 0; j < phrase.length; j++) {
+                if (!page.get(i+j).equals(phrase[j])){
+                    continue outer;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     @Test
     public void testWebQuery() {
-        
+        String[] phrase = {"word","hi"};
+        System.out.println(containsPhrase(null, phrase));
     }
 
 }

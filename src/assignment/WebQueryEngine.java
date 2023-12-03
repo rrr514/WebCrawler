@@ -36,7 +36,7 @@ public class WebQueryEngine {
      */
     public Collection<Page> query(String query) {
         LinkedList<Page> ret = new LinkedList<>();
-        if(query.length() == 0) return ret;
+        if(query.trim().length() == 0) return ret;
         // query = query.toUpperCase();
         // LinkedList<Page> ret = new LinkedList<>();
         // Page p;
@@ -64,6 +64,7 @@ public class WebQueryEngine {
         //adding implicit ands
         sbTemp.append(sb.toString().charAt(0)); //assuming not empty
         boolean temp = false;
+        if(sb.charAt(0) == '"') temp = true; //check to see if we start in between quotations
         boolean implicitAndBetweenTwoWords = false;
         for (int i = 1; i < sb.toString().length(); i++) {
             //add implicit & between opposing parentheses
@@ -196,15 +197,41 @@ public class WebQueryEngine {
         HashSet<URL> pushing;
         HashSet<URL> popped1;
         HashSet<URL> popped2;
+        String[] phrase;
         while(!output.isEmpty()){
             String rem = output.poll();
             //if phrase or word
             if(!isOperator(rem.charAt(0))){
-                //push the set of URLs onto the eval stack
                 rem = rem.toUpperCase();
-                pushing = webInd.ind.get(rem);
-                if(pushing == null) pushing = new HashSet<>();
-                eval.push(pushing);
+                phrase = rem.split(" ");
+                //is phrase
+                if (phrase.length > 1){
+                    if(webInd.ind.get(phrase[0]) == null) {
+                        pushing = new HashSet<>();
+                    }
+                    else pushing = new HashSet<>(webInd.ind.get(phrase[0]));
+                    for (int i = 1; i < phrase.length; i++) {
+                        pushing.retainAll(webInd.ind.get(phrase[i]));
+                    }
+                    HashSet<URL> newPushing = new HashSet<>();
+                    for (URL u : pushing) {
+                        if (containsPhrase(u, phrase)){
+                            newPushing.add(u);
+                        }
+                    }
+                    eval.push(newPushing);
+                }
+                //is word
+                else if(phrase.length == 1){
+                    //push the set of URLs onto the eval stack
+                    rem = rem.toUpperCase();
+                    pushing = webInd.ind.get(rem);
+                    if(pushing == null) pushing = new HashSet<>();
+                    eval.push(pushing);
+                }
+                else{
+                    System.err.println("Failing silently: Phrase length is less than 1");
+                }
             }
             //if operator
             else{
@@ -245,9 +272,12 @@ public class WebQueryEngine {
             }
         }
 
-        if(eval.size() != 1) System.err.println("Failing silently: More than 1 result left in eval stack");
-        for(URL u: eval.peek()){
-            ret.add(new Page(u));
+        if(eval.size() > 1) System.err.println("Failing silently: More than 1 result left in eval stack");
+        else if(eval.size() == 0) return new LinkedList<>();
+        else {
+            for(URL u: eval.peek()){
+                ret.add(new Page(u));
+            }
         }
         return ret;
 
@@ -275,5 +305,19 @@ public class WebQueryEngine {
             case '"': return true;
             default: return false;
         }
+    }
+
+    private boolean containsPhrase(URL url, String[] phrase){
+        ArrayList<String> page = webInd.pageContents.get(url);
+        outer:
+        for (int i = 0; i < page.size()-phrase.length+1; i++) {
+            for (int j = 0; j < phrase.length; j++) {
+                if (!page.get(i+j).equals(phrase[j])){
+                    continue outer;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

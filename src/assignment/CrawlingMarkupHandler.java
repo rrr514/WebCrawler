@@ -83,6 +83,9 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
      */
     public void handleDocumentEnd(long endTimeNanos, long totalTimeNanos, int line, int col) {
         // TODO: Implement this.
+        for (int i = 0; i < words.size(); i++) {
+            words.set(i, words.get(i).toUpperCase());
+        }
         ind.pageContents.put(url, words);
         // System.out.println("End of document");
     }
@@ -251,6 +254,13 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                 sb.append(ch[i]);
             }
         }
+        //if stuff leftover in stringbuilder, add it in to words
+        if(sb.length() != 0){
+            words.add(sb.toString());
+            ind.insert(sb.toString(), url);
+        }
+        // System.out.println("Words: " + words);
+        // System.out.println("SB: " + sb);
     }
 
     private StringBuilder trimPunctuation(StringBuilder sb){
