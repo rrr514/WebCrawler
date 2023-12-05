@@ -36,7 +36,13 @@ public class WebQueryEngine {
      */
     public Collection<Page> query(String query) {
         LinkedList<Page> ret = new LinkedList<>();
-        if(query.trim().length() == 0) return ret;
+        //return all URLs if query is empty
+        if(query.trim().length() == 0) {
+            for(URL u: webInd.visitedURLs){
+                ret.add(new Page(u));
+            }
+            return ret;
+        }
         // query = query.toUpperCase();
         // LinkedList<Page> ret = new LinkedList<>();
         // Page p;
@@ -57,9 +63,21 @@ public class WebQueryEngine {
         }
         sb.append(tokens[tokens.length-1]);
 
-        StringBuilder sbTemp = new StringBuilder();
+        //return all URLs if query has no words and is all empty
+        boolean isEmptyPhraseQuery = true;
+        for (int i = 0; i < sb.length(); i++) {
+            if(!isOperator(sb.charAt(i))){
+                isEmptyPhraseQuery = false;
+            }
+        }
+        if(isEmptyPhraseQuery){
+            for(URL u: webInd.visitedURLs){
+                ret.add(new Page(u));
+            }
+            return ret;
+        }
 
-        //TODO what if query is empty ^ go to top
+        StringBuilder sbTemp = new StringBuilder();
 
         //adding implicit ands
         sbTemp.append(sb.toString().charAt(0)); //assuming not empty

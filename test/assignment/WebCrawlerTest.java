@@ -37,7 +37,7 @@ public class WebCrawlerTest {
 
     @Test
     public void testWebCrawler() {
-        String query = " ( ! \" START          END\" words ) 6 ( a & ( b ( c | d ) ) \"     f g      \" ( 0 & 1 ) ) ! 2 4 ";
+        // String query = " ( ! \" START          END\" words ) 6 ( a & ( b ( c | d ) ) \"     f g      \" ( 0 & 1 ) ) ! 2 4 ";
         // String query = "! ( ( 4 ) ! 3) ( ! 7 \" 57439 84329\" ! 6) ( 1 ! 9 ) )";
         // String query = " .a ( h | w ) .b ( h. | ( g.. ! .f ) ) ( \" ...e        b... \" ) . \"    h       b\" . ";
         // String query = "(hello | world & (! not & your mom)) (hi | globe)";
@@ -45,6 +45,7 @@ public class WebCrawlerTest {
         // String query = " ! \" not \" ( ! your ! mom ) ( hi & ! \" phrase phrase \" ) ! no ";
         // String query = "(hello | world)(hi | globe)";
         //String query = "\"I am\"";
+        String query = "(\" \" | \" \")";
         query = query.trim();
         String tokens[] = query.split("\\s+");
         StringBuilder sb = new StringBuilder();
@@ -56,6 +57,19 @@ public class WebCrawlerTest {
             }
         }
         sb.append(tokens[tokens.length-1]);
+
+        System.out.println("toString: " + sb.toString());
+
+        //return all URLs if query has no words and is all empty
+        boolean isEmptyPhraseQuery = true;
+        for (int i = 0; i < sb.length(); i++) {
+            if(!isOperator(sb.charAt(i))){
+                isEmptyPhraseQuery = false;
+            }
+        }
+        if(isEmptyPhraseQuery){
+            System.out.println("EMPTY PHARS QUERY");
+        }
 
         StringBuilder sbTemp = new StringBuilder();
 
