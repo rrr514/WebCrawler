@@ -141,7 +141,10 @@ public class WebQueryEngine {
             implicitAndBetweenTwoWords = false;
             if(sb.toString().charAt(i) == '"') temp = !temp;
         }
+
         sb = sbTemp;
+
+        //changing to infix expression
         ArrayList<String> infix = new ArrayList<String>();
         StringBuilder sb2 = new StringBuilder();
         boolean flag = false;
@@ -229,6 +232,7 @@ public class WebQueryEngine {
                     }
                     else pushing = new HashSet<>(webInd.ind.get(phrase[0]));
                     for (int i = 1; i < phrase.length; i++) {
+                        if(webInd.ind.get(phrase[i]) == null) continue;
                         pushing.retainAll(webInd.ind.get(phrase[i]));
                     }
                     HashSet<URL> newPushing = new HashSet<>();
@@ -313,6 +317,7 @@ public class WebQueryEngine {
         
     }
 
+    //returns true if the character is an operator, returns false otherwise
     private boolean isOperator(char c){
         switch(c){
             case '(': return true;
@@ -325,6 +330,7 @@ public class WebQueryEngine {
         }
     }
 
+    //returns true if the URL contains the phrase, returns false otherwise
     private boolean containsPhrase(URL url, String[] phrase){
         ArrayList<String> page = webInd.pageContents.get(url);
         outer:

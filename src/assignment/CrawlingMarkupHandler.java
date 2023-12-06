@@ -208,6 +208,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
 
         // iterate through ch array and add all words to the index
         // System.out.println(ch);
+
         StringBuilder sb = new StringBuilder();
         
         for (int i = start; i < start + length; i++) {
@@ -218,7 +219,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                 // if first char is punctuation, then skip
                 if (sb.length() == 0) continue;
                 // if last char is punctuation, then add the word to the index
-                if (i == ch.length - 1) {
+                if (i == start + length - 1) {
                     if(sb.length() == 0) continue;
                     sb = trimPunctuation(sb);
                     ind.insert(sb.toString(), url);
@@ -263,6 +264,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
         // System.out.println("SB: " + sb);
     }
 
+    //removes the punctuation off the ends of a StringBuilder
     private StringBuilder trimPunctuation(StringBuilder sb){
         int left = 0, right = sb.length()-1;
         while(Pattern.matches("\\p{Punct}", "" + sb.charAt(left))){

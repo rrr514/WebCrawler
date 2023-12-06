@@ -43,9 +43,9 @@ public class WebCrawlerTest {
         // String query = "(hello | world & (! not & your mom)) (hi | globe)";
         // String query = " ( \" phrase phrase2 \" ) ! \" your \" ";
         // String query = " ! \" not \" ( ! your ! mom ) ( hi & ! \" phrase phrase \" ) ! no ";
-        // String query = "(hello | world)(hi | globe)";
+        String query = "(hello | world) (hi | globe)";
         //String query = "\"I am\"";
-        String query = "(\" \" | \" \")";
+        // String query = "(\" \" | \" \")";
         query = query.trim();
         String tokens[] = query.split("\\s+");
         StringBuilder sb = new StringBuilder();
