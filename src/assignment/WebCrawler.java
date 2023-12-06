@@ -18,6 +18,7 @@ public class WebCrawler {
     * you see fit, as long as it takes URLs as inputs and saves an Index at "index.db".
     */
     public static void main(String[] args) {
+        long timeStart = System.currentTimeMillis();
         // Basic usage information
         if (args.length == 0) {
             System.err.println("Error: No URLs specified.");
@@ -67,7 +68,7 @@ public class WebCrawler {
 
             WebIndex index = (WebIndex) handler.getIndex();
             //debug code - printing out the index
-            System.out.println(index);
+            // System.out.println(index);
             // System.out.println("Contains \"MINI-MEAN\": " + index.ind.containsKey("MINI-MEAN"));
             //debug code - printing out how many urls were crawled
             System.out.println("Pages Traversed: " + urlCount);
@@ -79,6 +80,7 @@ public class WebCrawler {
             // System.out.println("Visited URLs: " + handler.visitedURLs);
             //debug code - printing out the number of visited urls
             System.out.println("Number of visited URLs: " + handler.ind.visitedURLs.size());
+            // System.out.println(handler.words);
             handler.getIndex().save("index.db");
         } catch (Exception e) {
             // Bad exception handling :(
@@ -86,5 +88,8 @@ public class WebCrawler {
             e.printStackTrace();
             System.exit(1);
         }
+        long timeEnd = System.currentTimeMillis();
+        long timeTaken = timeEnd - timeStart;
+        System.out.println("Time taken: " + timeTaken + "ms");
     }
 }

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -250,8 +251,20 @@ public class WebCrawlerTest {
 
     @Test
     public void testWebQuery() {
-        String[] phrase = {"word","hi"};
-        System.out.println(containsPhrase(null, phrase));
+        String s = "..hh.";
+        StringBuilder test = new StringBuilder(s);
+        System.out.println("Trimmed String: " + trimPunctuation(test) + ":");
     }
 
+    private StringBuilder trimPunctuation(StringBuilder sb){
+        int left = 0, right = sb.length()-1;
+        while(left < sb.length() && Pattern.matches("\\p{Punct}", "" + sb.charAt(left))){
+            left++;
+        }
+        while(right >= 0 && Pattern.matches("\\p{Punct}", "" + sb.charAt(right))){
+            right--;
+        }
+        if(left > right) return new StringBuilder();
+        else return new StringBuilder(sb.substring(left, right+1));
+    }
 }

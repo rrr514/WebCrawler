@@ -110,11 +110,23 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                 ignoreCount++;
                 break;
         }
-
-        if (attributes != null && attributes.containsKey("HREF")) {
-            // check if already visited the url
-            String link = attributes.get("HREF");
-            
+        if (attributes != null && (attributes.containsKey("HREF") || attributes.containsKey("href"))) {
+            String link;
+            if(attributes.containsKey("HREF")){
+                link = attributes.get("HREF");
+            }
+            else{
+                link = attributes.get("href");
+            }
+            //remove #s and ?s
+            int hashtagIndex = link.indexOf('#');
+            int questionMarkIndex = link.indexOf('?');
+            if(hashtagIndex != -1 && questionMarkIndex != -1) {
+                link = link.substring(0, Math.min(hashtagIndex, questionMarkIndex));
+            }
+            else if(hashtagIndex != -1) link = link.substring(0, hashtagIndex);
+            else if(questionMarkIndex != -1) link = link.substring(0, questionMarkIndex);  
+            if(!link.endsWith("html")) return;
             try {
                 URI urli = URI.create(url.toString());
                 // System.out.println("URI: " + uri.toString());
@@ -212,16 +224,21 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
         StringBuilder sb = new StringBuilder();
         
         for (int i = start; i < start + length; i++) {
-            if (ignoreCount != 0)
+            if (ignoreCount != 0) continue;
+            // System.out.println(sb);
+            //handling nbsp case
+            if(sb.toString().equals("&nbsp") && ch[i] == ';'){
+                sb.setLength(0);
                 continue;
+            }
             // punctuation mark case
             if (Pattern.matches("\\p{Punct}", "" + ch[i])) {
                 // if first char is punctuation, then skip
-                if (sb.length() == 0) continue;
+                // if (sb.length() == 0) continue;
                 // if last char is punctuation, then add the word to the index
                 if (i == start + length - 1) {
-                    if(sb.length() == 0) continue;
                     sb = trimPunctuation(sb);
+                    if(sb.length() == 0) continue;
                     ind.insert(sb.toString(), url);
                     words.add(sb.toString());
                     // clear the StringBuilder
@@ -231,8 +248,8 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                 else {
                     // if it is, we have a word, so add it to the index
                     if (Character.isWhitespace(ch[i + 1])) {
-                        if(sb.length() == 0) continue;
                         sb = trimPunctuation(sb);
+                        if(sb.length() == 0) continue;
                         ind.insert(sb.toString(), url);
                         words.add(sb.toString());
                         // clear the StringBuilder
@@ -246,8 +263,8 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             }
             // whitespace case
             else if (Character.isWhitespace(ch[i])) {
-                if(sb.length() == 0) continue;
                 sb = trimPunctuation(sb);
+                if(sb.length() == 0) continue;
                 ind.insert(sb.toString(), url);
                 words.add(sb.toString());
                 sb.setLength(0);
@@ -267,12 +284,13 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
     //removes the punctuation off the ends of a StringBuilder
     private StringBuilder trimPunctuation(StringBuilder sb){
         int left = 0, right = sb.length()-1;
-        while(Pattern.matches("\\p{Punct}", "" + sb.charAt(left))){
+        while(left < sb.length() && Pattern.matches("\\p{Punct}", "" + sb.charAt(left))){
             left++;
         }
-        while(Pattern.matches("\\p{Punct}", "" + sb.charAt(right))){
+        while(right >= 0 && Pattern.matches("\\p{Punct}", "" + sb.charAt(right))){
             right--;
         }
-        return new StringBuilder(sb.substring(left, right+1));
+        if(left > right) return new StringBuilder();
+        else return new StringBuilder(sb.substring(left, right+1));
     }
 }

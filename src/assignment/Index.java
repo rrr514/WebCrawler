@@ -19,7 +19,7 @@ public class Index implements Serializable {
     public static Index load(String filename) throws IOException, ClassNotFoundException {
         // Uses Java 7's try-with-resources to attempt to open the file, automatically closing it
         // upon completion or failure.
-        try(ObjectInputStream oin = new ObjectInputStream(new FileInputStream(filename))) {
+        try(ObjectInputStream oin = new ObjectInputStream(new BufferedInputStream(new FileInputStream(filename)))) {
             return (Index) oin.readObject();
         }
     }
@@ -31,7 +31,7 @@ public class Index implements Serializable {
     public void save(String filename) throws IOException {
         // Uses Java 7's try-with-resources to attempt to open the file, automatically closing it
         // upon completion or failure.
-        try(ObjectOutputStream oout = new ObjectOutputStream(new FileOutputStream(filename))) {
+        try(ObjectOutputStream oout = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
             oout.writeObject(this);
         }
     }

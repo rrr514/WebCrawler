@@ -13,7 +13,7 @@
             "request": "launch",
             "mainClass": "assignment.WebCrawler",
             "projectName": "prog7",
-            "args": "file:///Users/rrr/git-314h/314h-prog7-prog7group16/superspoof/index.html"
+            "args": "file:///Users/rrr/git-314h/314h-prog7-prog7group16/rhf/index.html"
         },
         {
             "type": "java",
