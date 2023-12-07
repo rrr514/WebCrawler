@@ -43,14 +43,6 @@ public class WebQueryEngine {
             }
             return ret;
         }
-        // query = query.toUpperCase();
-        // LinkedList<Page> ret = new LinkedList<>();
-        // Page p;
-        // for(URL u: webInd.ind.get(query)){
-        // p = new Page(u);
-        // ret.add(p);
-        // }
-        // return ret;
         query = query.trim();
         String tokens[] = query.split("\\s+");
         StringBuilder sb = new StringBuilder();
@@ -88,7 +80,6 @@ public class WebQueryEngine {
             //add implicit & between opposing parentheses
             if (sb.toString().charAt(i-1) == ')' && sb.toString().charAt(i) == '(') {
                 sbTemp.append('&'); 
-                // System.out.println("Case 4");
             }
             //if not in quotations
             if(!temp){
@@ -97,14 +88,12 @@ public class WebQueryEngine {
                 if ((sb.toString().charAt(i-1) == '"') && 
                 (!isOperator(sb.toString().charAt(i)) || sb.toString().charAt(i) == '(')) {
                     sbTemp.append('&'); 
-                    // System.out.println("Case 1");
                 }
                 //add implicit & between regular word and phrase query, including the case where the phrase query
                 //ends in a parenthesis
                 if ((!isOperator(sb.toString().charAt(i-1)) || sb.toString().charAt(i-1) == ')') 
                 && sb.toString().charAt(i) == '"') {
                     sbTemp.append('&'); 
-                    // System.out.println("Case 2");
                 }
                 //add implicit & between regular word and open parentheses
                 if(!isOperator(sb.toString().charAt(i-1)) && sb.toString().charAt(i) == '('){
@@ -129,7 +118,6 @@ public class WebQueryEngine {
                 //add implicit & between two phrase queries
                 if (sb.toString().charAt(i-1) == '"' && sb.toString().charAt(i) == '"') {
                     sbTemp.append('&'); 
-                    // System.out.println("Case 3");
                 }
                 //add implicit & between two regular words
                 if(sb.toString().charAt(i) == ' '){
@@ -161,14 +149,6 @@ public class WebQueryEngine {
             }
             //if inside quotations, continue to next letter
             if (flag && sb.charAt(i) == ' ') sb2.append(" ");
-            //if outside quotations, add an implicit 'and'
-            // if (!flag && sb.charAt(i) == ' '){
-            //     if (sb2.length() != 0){
-            //         infix.add(sb2.toString());
-            //         sb2.setLength(0);
-            //     }
-            //     infix.add("&");
-            // }
             //if it is a letter, append to word builder
             if (!isOperator(sb.charAt(i)) && sb.charAt(i) != ' ') sb2.append(""+sb.charAt(i));
         }
@@ -180,7 +160,6 @@ public class WebQueryEngine {
         //shunting yard algorithm to convert infix to RPN
         Stack<String> ops = new Stack<>();
         Queue<String> output = new LinkedList<String>();
-        //char[] q = sb.toString().toCharArray();
 
         for (int i = 0; i < infix.size(); i++) {
             switch (infix.get(i)) {
@@ -263,8 +242,6 @@ public class WebQueryEngine {
                     if(popped1 == null){
                         System.err.println("Failing silently: popped1 is null");
                     }
-                    //pushing = getSetComplement(popped1);
-                    // pushing.addAll(webInd.visitedURLs);
                     //getting set complement
                     pushing = new HashSet<>(webInd.visitedURLs);
                     pushing.removeAll(popped1);
@@ -276,7 +253,6 @@ public class WebQueryEngine {
                     popped2 = eval.pop();
                     //and operator
                     if(rem.equals("&")){
-                        // pushing = getSetIntersection(popped1, popped2);
                         //getting set intersection
                         pushing = new HashSet<>(popped1);
                         pushing.retainAll(popped2);
@@ -284,7 +260,6 @@ public class WebQueryEngine {
                     }
                     //or operator
                     else if(rem.equals("|")){
-                        // pushing = getSetUnion(popped1, popped2);
                         //getting set union
                         pushing = new HashSet<>(popped1);
                         pushing.addAll(popped2);
@@ -301,20 +276,7 @@ public class WebQueryEngine {
                 ret.add(new Page(u));
             }
         }
-        return ret;
-
-        /*
-        pseudo solution for parsing queries
-        want to turn nonsense query into proper infix notation
-        turn all whitespaces into a single space if sandwhiched between two words, else delete space
-        iterate through query
-        if it is a operator (includes quotation marks), add to infix array
-        if it is a word, add to array
-        for spaces, if inside quotations, continue to next word
-        if outside quotations, add an implicit 'and'
-        use shunting yard to switch to RPN
-        */
-        
+        return ret;  
     }
 
     //returns true if the character is an operator, returns false otherwise

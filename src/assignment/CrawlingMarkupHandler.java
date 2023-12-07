@@ -12,14 +12,12 @@ import org.attoparser.simple.*;
  * the input;
  * responsible for building the actual web index.
  *
- * TODO: Implement this!
  */
 public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
 
     // stores the page that is currently being crawled through
     URL url;
     WebIndex ind = new WebIndex();
-    // HashSet<URL> visitedURLs = ind.visitedURLs;
     private HashSet<URL> newURLs = new HashSet<>();
     ArrayList<String> words = new ArrayList<>();
     int ignoreCount = 0;
@@ -67,9 +65,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
      * @param col            the column of the document where parsing starts
      */
     public void handleDocumentStart(long startTimeNanos, int line, int col) {
-        // TODO: Implement this.
         words = new ArrayList<>();
-        // System.out.println("Start of document");
     }
 
     /**
@@ -82,12 +78,10 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
      * @param col            the column of the document where the parsing ends
      */
     public void handleDocumentEnd(long endTimeNanos, long totalTimeNanos, int line, int col) {
-        // TODO: Implement this.
         for (int i = 0; i < words.size(); i++) {
             words.set(i, words.get(i).toUpperCase());
         }
         ind.pageContents.put(url, words);
-        // System.out.println("End of document");
     }
 
     /**
@@ -100,8 +94,6 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
      * @param col         the column in the document where this element appears
      */
     public void handleOpenElement(String elementName, Map<String, String> attributes, int line, int col) {
-        // TODO: Implement this.
-        // System.out.println("Start element: " + elementName);
         switch (elementName) {
             case "style":
                 ignoreCount++;
@@ -129,15 +121,7 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             if(!link.endsWith("html")) return;
             try {
                 URI urli = URI.create(url.toString());
-                // System.out.println("URI: " + uri.toString());
                 URL urlAdd = urli.resolve(link).normalize().toURL();
-                // System.out.println("URL: " + urlAdd.toString());
-                // File file = new File(urlAdd.toString());
-                // System.out.println("File tested: " + file.toString());
-                // if (!file.exists()){
-                //     System.out.println("File does not exist.");
-                //     return;
-                // }
                 File f = new File(urlAdd.getFile());
                 if(!f.exists()){
                     return;
@@ -149,7 +133,6 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
                     if (urlAdd.toString().endsWith("html")) {
                         ind.visitedURLs.add(urlAdd);
                         newURLs.add(urlAdd);
-                        // System.out.printf("Successfully added URL '%s' from page.\n", urlAdd);
                     }
                 }
             } catch (MalformedURLException e) {
@@ -167,8 +150,6 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
      * @param col         the column in the document where this element appears.
      */
     public void handleCloseElement(String elementName, int line, int col) {
-        // TODO: Implement this.
-        // System.out.println("End element: " + elementName);
         switch (elementName) {
             case "style":
                 ignoreCount--;
@@ -190,42 +171,10 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
      * @param length number of characters in ch
      */
     public void handleText(char ch[], int start, int length, int line, int col) {
-        // TODO: Implement this.
-        // System.out.print("Characters: \"");
-
-        // for(int i = start; i < start + length; i++) {
-        // // Instead of printing raw whitespace, we're escaping it
-        // switch(ch[i]) {
-        // case '\\':
-        // System.out.print("\\\\");
-        // break;
-        // case '"':
-        // System.out.print("\\\"");
-        // break;
-        // case '\n':
-        // System.out.print("\\n");;
-        // case '\r':
-        // System.out.print("\\r");
-        // break;
-        // case '\t':
-        // System.out.print("\\t");
-        // break;
-        // default:
-        // System.out.print(ch[i]);
-        // break;
-        // }
-        // }
-
-        // System.out.print("\"\n");
-
-        // iterate through ch array and add all words to the index
-        // System.out.println(ch);
-
         StringBuilder sb = new StringBuilder();
         
         for (int i = start; i < start + length; i++) {
             if (ignoreCount != 0) continue;
-            // System.out.println(sb);
             //handling nbsp case
             if(sb.toString().equals("&nbsp") && ch[i] == ';'){
                 sb.setLength(0);
@@ -233,8 +182,6 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             }
             // punctuation mark case
             if (Pattern.matches("\\p{Punct}", "" + ch[i])) {
-                // if first char is punctuation, then skip
-                // if (sb.length() == 0) continue;
                 // if last char is punctuation, then add the word to the index
                 if (i == start + length - 1) {
                     sb = trimPunctuation(sb);
@@ -277,8 +224,6 @@ public class CrawlingMarkupHandler extends AbstractSimpleMarkupHandler {
             words.add(sb.toString());
             ind.insert(sb.toString(), url);
         }
-        // System.out.println("Words: " + words);
-        // System.out.println("SB: " + sb);
     }
 
     //removes the punctuation off the ends of a StringBuilder
