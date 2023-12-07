@@ -68,7 +68,7 @@ public class WebCrawler {
 
             WebIndex index = (WebIndex) handler.getIndex();
             //debug code - printing out the index
-            // System.out.println(index);
+            //System.out.println(index);
             // System.out.println("Contains \"MINI-MEAN\": " + index.ind.containsKey("MINI-MEAN"));
             //debug code - printing out how many urls were crawled
             System.out.println("Pages Traversed: " + urlCount);
